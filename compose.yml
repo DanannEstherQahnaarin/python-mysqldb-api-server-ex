@@ -1,0 +1,31 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: myapp-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpw
+      MYSQL_DATABASE: appdb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppw
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  api:
+    build: ./backend
+    container_name: myapp-api
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: appdb
+      DB_USER: appuser
+      DB_PASSWORD: apppw
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
